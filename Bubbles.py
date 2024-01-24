@@ -33,8 +33,7 @@ bubble = pygame.image.load("kupla.png").convert_alpha() #size:100x90
 hand = pygame.image.load("hand.png").convert_alpha()
 handArea = hand.get_rect()
 
-
-class Button():
+class Button(): 
     def __init__(self, x, y, image):
         self.image = image
         self.rect = self.image.get_rect()
@@ -44,7 +43,7 @@ class Button():
         action = False
         #get mouse position
         pos = pygame.mouse.get_pos()
-        #print(pos)
+
         #check mouseover and clicked conditions
         if self.rect.collidepoint(pos):
             #print("hover")
@@ -90,13 +89,6 @@ class Bubble():
             self.speed[1] = -self.speed[1]
 
 
-#create bubble instance
-
-bubble_1 = Bubble(500, 500, bubble, [1,1])
-bubble_2 = Bubble(0, 0, bubble, [1,1])
-        
-   
-
 def start_menu():
 
 
@@ -105,11 +97,9 @@ def start_menu():
     menu_background_color = (52, 78, 91)
     menu.fill(menu_background_color)
 
-
     not_selected = True
     while not_selected:
     
-
         #event handler
         for event in pygame.event.get():
             if play_button.draw():
@@ -132,7 +122,6 @@ def start_menu():
         screen.blit(welcome_text, (welcome_x, welcome_y))
         play_button.draw()
         quit_button.draw()
-
         pygame.display.flip()
 
 def game_over_menu():
@@ -141,15 +130,12 @@ def game_over_menu():
     menu_background_color = (52, 78, 91)
     menu.fill(menu_background_color)
 
-
     not_selected = True
     while not_selected:
-    
 
         #event handler
         for event in pygame.event.get():
             if play_again_button.draw():
-                print("nappi toimii")
                 play()
 
             if quit_button.draw():
@@ -169,31 +155,29 @@ def game_over_menu():
         screen.blit(game_over_text, (button_x, welcome_y))
         play_again_button.draw()
         quit_button.draw()
-
         pygame.display.flip()
-
 
 def play():
 
     #screen
-
     pygame.display.set_caption("Let's play")
-
-
     level = pygame.Surface((screen_width, screen_height))
     backgroundColor = (213, 242, 250)
     level.fill(backgroundColor)
 
+    #define hand speed and start position
     hand_speed = 1
     handArea.left = 300
     handArea.top = 300
 
+    #create bubble instance
+    bubble_1 = Bubble(500, 500, bubble, [1,1])
+    bubble_2 = Bubble(0, 0, bubble, [1,1])
 
-
-
-    run = True
     #game loop
+    run = True
     while run:
+        pygame.time.delay(3)
         #event handler
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -204,21 +188,16 @@ def play():
                     pygame.quit()
                     sys.exit()
 
-
-
-
         screen.blit(level, (0,0))
         screen.blit(hand, handArea)
+
         bubble_1.draw()
         bubble_2.draw()
         pygame.display.flip()
 
         if bubble_1.rect.colliderect(bubble_2.rect):
-            print("Poks!")
             game_over_menu()
-        
-        #pygame.display.flip()
-        
+
         #define hand movements
         keypressed = pygame.key.get_pressed()
         
