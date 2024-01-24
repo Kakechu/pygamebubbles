@@ -29,8 +29,7 @@ upper_button_y = screen_height/2 - 75
 lower_button_y = screen_height/2 + 75
 
 #object images
-bubble = pygame.image.load("kupla.png").convert_alpha()
-bubble2 = pygame.image.load("kupla.png").convert_alpha() #size:100X90 #tämä toinen poistetaan
+bubble = pygame.image.load("kupla.png").convert_alpha() #size:100x90
 hand = pygame.image.load("hand.png").convert_alpha()
 handArea = hand.get_rect()
 
@@ -72,39 +71,26 @@ play_again_button = Button(button_x, upper_button_y, play_again_img)
 class Bubble():
     def __init__(self, x, y, image, speed):
         self.image = image
-        self.rect = self.image.get_rect() #circle??
+        self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
         self.speed = speed
-        #self.bubbleArea.left = x
-        #self.bubbleArea.top = y
-
 
     def draw(self):
-        #collided = False
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
-    #def move_bubble(self):#tämä lisätty äsken
         self.rect.move_ip(self.speed)
         if self.rect.colliderect(left_wall) or self.rect.colliderect(right_wall):
-            #game_over_menu()
             self.speed[0] = -self.speed[0]
-            
-            #self.rect.move_ip(-1, 0)
+
         if self.rect.colliderect(ceiling) or self.rect.colliderect(floor):
-            #game_over_menu()
             self.speed[1] = -self.speed[1]
 
         if self.rect.colliderect(handArea):
-            #game_over_menu()
             self.speed[0] = -self.speed[0]
             self.speed[1] = -self.speed[1]
 
 
-
-#miten kuplien törmäys havaitaan? lisää bubblet listaan, tsekkaa, onko siellä? looppaa?
-
-
-#create button instance
+#create bubble instance
 
 bubble_1 = Bubble(500, 500, bubble, [1,1])
 bubble_2 = Bubble(0, 0, bubble, [1,1])
@@ -199,14 +185,9 @@ def play():
     level.fill(backgroundColor)
 
     hand_speed = 1
-    #handArea = hand.get_rect()
     handArea.left = 300
     handArea.top = 300
 
-
-    #bubbleArea = bubble.get_rect()
-    #bubble2Area = bubble2.get_rect()
-    #handArea = hand.get_rect()
 
 
 
@@ -222,39 +203,22 @@ def play():
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-        
-#            if bubble_1.rect.colliderect(bubble_2.rect):
-#                print("Collision detected!")
-                #game_over_menu()
 
-
-
-        #bubbleArea.move_ip(speed)
-        #bubble2Area.move_ip(speed)
 
 
 
         screen.blit(level, (0,0))
-        #screen.blit(bubble, bubbleArea)
-        #screen.blit(bubble2, bubble2Area)
         screen.blit(hand, handArea)
-        bubble_1.draw() #nämä siirretty, tämä alkup 
-        bubble_2.draw() #nämä siirretty, tämä alkup 
-
-        #bubble_1.move_bubble() #kokeillaan ensin liikuttaa, sitten piirretään
-        #bubble_2.move_bubble()
+        bubble_1.draw()
+        bubble_2.draw()
+        pygame.display.flip()
 
         if bubble_1.rect.colliderect(bubble_2.rect):
-            print("Collision detected!")
+            print("Poks!")
             game_over_menu()
         
-
-        pygame.display.flip() #tämä siirretty, tämä alkup
-        #bubbleArea.move_ip(speed)
-        #bubble2Area.move_ip(speed)
+        #pygame.display.flip()
         
-        
-
         #define hand movements
         keypressed = pygame.key.get_pressed()
         
@@ -266,11 +230,5 @@ def play():
             handArea.move_ip((0,hand_speed))
         if keypressed[K_UP] and not handArea.colliderect(ceiling):
             handArea.move_ip((0,-hand_speed))
-
-
-        #bubble_1_area = bubble_1.get_rect()
-        #bubble_1.draw() #nämä siirretty, tämä alkup 
-        #bubble_2.draw()
-        #pygame.display.flip()
 
 start_menu()

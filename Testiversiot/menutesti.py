@@ -162,7 +162,7 @@ def play():
 
 
 
-
+#VALINTAMENU
 not_selected = True
 while not_selected:
     pygame.display.set_caption("Welcome")
