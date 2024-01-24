@@ -83,7 +83,7 @@ class Bubble():
         #collided = False
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
-
+    #def move_bubble(self):#tämä lisätty äsken
         self.rect.move_ip(self.speed)
         if self.rect.colliderect(left_wall) or self.rect.colliderect(right_wall):
             #game_over_menu()
@@ -223,6 +223,9 @@ def play():
                     pygame.quit()
                     sys.exit()
         
+#            if bubble_1.rect.colliderect(bubble_2.rect):
+#                print("Collision detected!")
+                #game_over_menu()
 
 
 
@@ -235,14 +238,18 @@ def play():
         #screen.blit(bubble, bubbleArea)
         #screen.blit(bubble2, bubble2Area)
         screen.blit(hand, handArea)
-        bubble_1.draw()
-        bubble_2.draw()
+        bubble_1.draw() #nämä siirretty, tämä alkup 
+        bubble_2.draw() #nämä siirretty, tämä alkup 
 
-        #if bubble_1.rect.colliderect(bubble_1.rect):
-        #    print("Collision detected!")
+        #bubble_1.move_bubble() #kokeillaan ensin liikuttaa, sitten piirretään
+        #bubble_2.move_bubble()
+
+        if bubble_1.rect.colliderect(bubble_2.rect):
+            print("Collision detected!")
+            game_over_menu()
         
 
-        pygame.display.flip()
+        pygame.display.flip() #tämä siirretty, tämä alkup
         #bubbleArea.move_ip(speed)
         #bubble2Area.move_ip(speed)
         
@@ -262,6 +269,8 @@ def play():
 
 
         #bubble_1_area = bubble_1.get_rect()
-
+        #bubble_1.draw() #nämä siirretty, tämä alkup 
+        #bubble_2.draw()
+        #pygame.display.flip()
 
 start_menu()
