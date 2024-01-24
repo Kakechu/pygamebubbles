@@ -167,8 +167,8 @@ def play():
 
     #define hand speed and start position
     hand_speed = 1
-    handArea.left = 300
-    handArea.top = 300
+    handArea.left = 400
+    handArea.top = 400
 
     #create bubble instance
     bubble_1 = Bubble(500, 500, bubble, [1,1])
