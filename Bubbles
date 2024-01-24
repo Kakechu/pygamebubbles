@@ -7,10 +7,20 @@ screen_width = 900
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 
+#create boundaries for the screen
+left_wall = pygame.Rect(-1, 0, 1, screen_height) #left, top, width, height
+right_wall = pygame.Rect(screen_width+1, 0, 1, screen_height)
+ceiling = pygame.Rect(-1, -1, screen_width+2, 1)
+floor = pygame.Rect(-1, screen_height+1, screen_width+2, 1)
+
+
 #button images
-play_button = pygame.image.load("play_button.png")
-quit_button = pygame.image.load("quit_button.png")
+play_button_img = pygame.image.load("play_button.png")
+quit_button_img = pygame.image.load("quit_button.png")
 welcome_text = pygame.image.load("welcome.png")
+play_again_img = pygame.image.load("play_again_button.png")
+game_over_text = pygame.image.load("game_over.png")
+
 #button coordinates into variables
 welcome_x = screen_width/2 - 250
 welcome_y = 50
@@ -18,6 +28,11 @@ button_x = screen_width/2 - 200
 upper_button_y = screen_height/2 - 75
 lower_button_y = screen_height/2 + 75
 
+#object images
+bubble = pygame.image.load("kupla.png").convert_alpha()
+bubble2 = pygame.image.load("kupla.png").convert_alpha() #size:100X90 #tämä toinen poistetaan
+hand = pygame.image.load("hand.png").convert_alpha()
+handArea = hand.get_rect()
 
 
 class Button():
@@ -48,10 +63,53 @@ class Button():
         return action
 
 #create button instances
-play_button = Button(button_x, upper_button_y, play_button)
-quit_button = Button(button_x, lower_button_y, quit_button)
+play_button = Button(button_x, upper_button_y, play_button_img)
+quit_button = Button(button_x, lower_button_y, quit_button_img)
+play_again_button = Button(button_x, upper_button_y, play_again_img)
 
+
+#create class for bubble
+class Bubble():
+    def __init__(self, x, y, image, speed):
+        self.image = image
+        self.rect = self.image.get_rect() #circle??
+        self.rect.topleft = (x, y)
+        self.speed = speed
+        #self.bubbleArea.left = x
+        #self.bubbleArea.top = y
+
+
+    def draw(self):
+        #collided = False
+        screen.blit(self.image, (self.rect.x, self.rect.y))
+
+
+        self.rect.move_ip(self.speed)
+        if self.rect.colliderect(left_wall) or self.rect.colliderect(right_wall):
+            #game_over_menu()
+            self.speed[0] = -self.speed[0]
+            
+            #self.rect.move_ip(-1, 0)
+        if self.rect.colliderect(ceiling) or self.rect.colliderect(floor):
+            #game_over_menu()
+            self.speed[1] = -self.speed[1]
+
+        if self.rect.colliderect(handArea):
+            #game_over_menu()
+            self.speed[0] = -self.speed[0]
+            self.speed[1] = -self.speed[1]
+
+
+
+#miten kuplien törmäys havaitaan? lisää bubblet listaan, tsekkaa, onko siellä? looppaa?
+
+
+#create button instance
+
+bubble_1 = Bubble(500, 500, bubble, [1,1])
+bubble_2 = Bubble(0, 0, bubble, [1,1])
         
+   
 
 def start_menu():
 
@@ -65,14 +123,16 @@ def start_menu():
     not_selected = True
     while not_selected:
     
-        if play_button.draw():
-            print(play_button.draw())
-            print("Start")
-        if quit_button.draw():
-            print("Quit")
 
         #event handler
         for event in pygame.event.get():
+            if play_button.draw():
+                play()
+
+            if quit_button.draw():
+                pygame.quit()
+                sys.exit()
+
             #quit game
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -82,16 +142,49 @@ def start_menu():
                     pygame.quit()
                     sys.exit()
 
-            #if event.type == MOUSEBUTTONDOWN
         screen.blit(menu, (0,0))
         screen.blit(welcome_text, (welcome_x, welcome_y))
         play_button.draw()
         quit_button.draw()
-        
-        #screen.blit(play_button, (button_x, upper_button_y))
-        #screen.blit(quit_button, (button_x, lower_button_y))
+
         pygame.display.flip()
+
+def game_over_menu():
+    pygame.display.set_caption("Game Over")
+    menu = pygame.Surface((screen_width, screen_height))
+    menu_background_color = (52, 78, 91)
+    menu.fill(menu_background_color)
+
+
+    not_selected = True
+    while not_selected:
     
+
+        #event handler
+        for event in pygame.event.get():
+            if play_again_button.draw():
+                print("nappi toimii")
+                play()
+
+            if quit_button.draw():
+                pygame.quit()
+                sys.exit()
+
+            #quit game
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+
+        screen.blit(menu, (0,0))
+        screen.blit(game_over_text, (button_x, welcome_y))
+        play_again_button.draw()
+        quit_button.draw()
+
+        pygame.display.flip()
 
 
 def play():
@@ -105,37 +198,22 @@ def play():
     backgroundColor = (213, 242, 250)
     level.fill(backgroundColor)
 
-    #objects
-    bubble = pygame.image.load("kupla.png").convert_alpha()
-    bubble2 = pygame.image.load("kupla.png").convert_alpha()
-    hand = pygame.image.load("hand.png").convert_alpha()
-
-    bubbleArea = bubble.get_rect()
-    bubble2Area = bubble2.get_rect()
-    handArea = hand.get_rect()
-
-    bubbleArea.left = 200
-    bubbleArea.top = 200
-    bubble2Area.left = 400
-    bubble2Area.top = 100
+    hand_speed = 1
+    #handArea = hand.get_rect()
     handArea.left = 300
     handArea.top = 300
 
-    hand_speed = 1
-    speed = [1, 1]
 
-    #ympäröidään screen suorakulmiolla
+    #bubbleArea = bubble.get_rect()
+    #bubble2Area = bubble2.get_rect()
+    #handArea = hand.get_rect()
 
-    left_wall = pygame.Rect(-1, 0, 1, screen_height) #left, top, width, height
-    right_wall = pygame.Rect(screen_width+1, 0, 1, screen_height)
-    ceiling = pygame.Rect(-1, -1, screen_width+2, 1)
-    floor = pygame.Rect(-1, screen_height+1, screen_width+2, 1)
 
 
     run = True
-
+    #game loop
     while run:
-
+        #event handler
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -151,17 +229,26 @@ def play():
         #bubbleArea.move_ip(speed)
         #bubble2Area.move_ip(speed)
 
-        #pygame.draw.rect(screen, (255, 0,0), (500, 300, 100, 100))
-        #pygame.display.flip()
+
 
         screen.blit(level, (0,0))
-        screen.blit(bubble, bubbleArea)
-        screen.blit(bubble2, bubble2Area)
+        #screen.blit(bubble, bubbleArea)
+        #screen.blit(bubble2, bubble2Area)
         screen.blit(hand, handArea)
+        bubble_1.draw()
+        bubble_2.draw()
 
-        #pygame.display.flip()
+        #if bubble_1.rect.colliderect(bubble_1.rect):
+        #    print("Collision detected!")
+        
 
-        #määritetään käden liikkeet
+        pygame.display.flip()
+        #bubbleArea.move_ip(speed)
+        #bubble2Area.move_ip(speed)
+        
+        
+
+        #define hand movements
         keypressed = pygame.key.get_pressed()
         
         if keypressed[K_LEFT] and not handArea.colliderect(left_wall):
@@ -173,11 +260,8 @@ def play():
         if keypressed[K_UP] and not handArea.colliderect(ceiling):
             handArea.move_ip((0,-hand_speed))
 
-        screen.blit(level, (0,0))
-        screen.blit(bubble, bubbleArea)
-        screen.blit(bubble2, bubble2Area)
-        screen.blit(hand, handArea)
-        pygame.display.flip()
+
+        #bubble_1_area = bubble_1.get_rect()
+
 
 start_menu()
-#play()
